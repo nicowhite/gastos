@@ -1,577 +1,543 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Preventivo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #F7F5F0;
-      --surface: #FFFFFF;
-      --surface2: #F0EDE7;
-      --border: #E0DDD7;
-      --border2: #C8C4BC;
-      --text: #1A1916;
-      --text2: #6B6860;
-      --text3: #9E9C97;
-      --accent: #1A1916;
-      --accent-text: #FFFFFF;
-      --danger: #C0392B;
-      --danger-bg: #FDF0EE;
-      --success: #2E7D5A;
-      --mono: 'DM Mono', monospace;
-      --sans: 'DM Sans', sans-serif;
-      --radius: 10px;
-      --radius-sm: 6px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #141412;
-        --surface: #1E1D1A;
-        --surface2: #282620;
-        --border: #2E2C28;
-        --border2: #3E3C37;
-        --text: #F0EDE7;
-        --text2: #9E9C97;
-        --text3: #5A5855;
-        --accent: #F0EDE7;
-        --accent-text: #1A1916;
-        --danger: #E05A4A;
-        --danger-bg: #2A1A18;
-        --success: #4CAF82;
-      }
-    }
-
-    html { -webkit-text-size-adjust: 100%; }
-
-    body {
-      font-family: var(--sans);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
-      padding-bottom: 2rem;
-    }
-
-    header {
-      padding: 1.5rem 1rem 1rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .header-inner {
-      max-width: 480px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
-    .app-title {
-      font-family: var(--mono);
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      color: var(--text);
-    }
-
-    .app-month {
-      font-size: 12px;
-      color: var(--text3);
-      font-family: var(--mono);
-    }
-
-    main {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .total-card {
-      background: var(--accent);
-      color: var(--accent-text);
-      border-radius: var(--radius);
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-
-    .total-label {
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      opacity: 0.5;
-      margin-bottom: 6px;
-    }
-
-    .total-amount {
-      font-family: var(--mono);
-      font-size: 28px;
-      font-weight: 500;
-      line-height: 1;
-    }
-
-    .total-count {
-      font-size: 12px;
-      opacity: 0.4;
-      font-family: var(--mono);
-    }
-
-    .form-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-    }
-
-    .form-title {
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text3);
-      margin-bottom: 1rem;
-      font-family: var(--mono);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .form-group { display: flex; flex-direction: column; gap: 4px; }
-    .form-group.full { grid-column: 1 / -1; }
-
-    label {
-      font-size: 11px;
-      color: var(--text3);
-      letter-spacing: 0.04em;
-      font-family: var(--mono);
-    }
-
-    select, input[type="text"], input[type="number"], input[type="date"] {
-      font-family: var(--sans);
-      font-size: 15px;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface2);
-      color: var(--text);
-      width: 100%;
-      appearance: none;
-      -webkit-appearance: none;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    select:focus, input:focus {
-      border-color: var(--border2);
-    }
-
-    select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%239E9C97' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 32px;
-    }
-
-    .btn-add {
-      grid-column: 1 / -1;
-      padding: 12px;
-      font-family: var(--sans);
-      font-size: 15px;
-      font-weight: 500;
-      background: var(--accent);
-      color: var(--accent-text);
-      border: none;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: opacity 0.15s;
-    }
-
-    .btn-add:active { opacity: 0.75; }
-
-    .list-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .list-header {
-      padding: 1rem 1.25rem 0.75rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .list-title {
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text3);
-      font-family: var(--mono);
-    }
-
-    .export-btns { display: flex; gap: 6px; }
-
-    .btn-icon {
-      padding: 6px 10px;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.04em;
-      background: transparent;
-      color: var(--text2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .btn-icon:active { background: var(--surface2); }
-
-    .empty-state {
-      padding: 3rem 1rem;
-      text-align: center;
-      color: var(--text3);
-      font-size: 14px;
-    }
-
-    .gasto-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 1.25rem;
-      border-bottom: 1px solid var(--border);
-      gap: 12px;
-      animation: slideIn 0.2s ease;
-    }
-
-    .gasto-item:last-child { border-bottom: none; }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .gasto-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--border2);
-      flex-shrink: 0;
-    }
-
-    .gasto-info { flex: 1; min-width: 0; }
-
-    .gasto-cat {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .gasto-meta {
-      font-size: 11px;
-      color: var(--text3);
-      font-family: var(--mono);
-      margin-top: 2px;
-    }
-
-    .gasto-monto {
-      font-family: var(--mono);
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-    }
-
-    .btn-del {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text3);
-      padding: 4px;
-      border-radius: 4px;
-      line-height: 1;
-      font-size: 16px;
-      transition: color 0.15s;
-      flex-shrink: 0;
-    }
-
-    .btn-del:active { color: var(--danger); }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(10px);
-      background: var(--text);
-      color: var(--bg);
-      padding: 10px 18px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-family: var(--mono);
-      opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 100;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Preventivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+--bg: #F7F5F0;
+--surface: #FFFFFF;
+--surface2: #F0EDE7;
+--border: #E0DDD7;
+--border2: #C8C4BC;
+--text: #1A1916;
+--text2: #6B6860;
+--text3: #9E9C97;
+--accent: #1A1916;
+--accent-text: #FFFFFF;
+--danger: #C0392B;
+--danger-bg: #FDF0EE;
+--success: #2E7D5A;
+--mono: 'DM Mono', monospace;
+--sans: 'DM Sans', sans-serif;
+--radius: 10px;
+--radius-sm: 6px;
+}
+@media (prefers-color-scheme: dark) {
+:root {
+--bg: #141412;
+--surface: #1E1D1A;
+--surface2: #282620;
+--border: #2E2C28;
+--border2: #3E3C37;
+--text: #F0EDE7;
+--text2: #9E9C97;
+--text3: #5A5855;
+--accent: #F0EDE7;
+--accent-text: #1A1916;
+--danger: #E05A4A;
+--danger-bg: #2A1A18;
+--success: #4CAF82;
+}
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+font-family: var(--sans);
+background: var(--bg);
+color: var(--text);
+min-height: 100dvh;
+padding-bottom: 2rem;
+}
+header {
+padding: 1.5rem 1rem 1rem;
+border-bottom: 1px solid var(--border);
+background: var(--surface);
+position: sticky;
+top: 0;
+z-index: 10;
+}
+.header-inner {
+max-width: 480px;
+margin: 0 auto;
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+}
+.app-title {
+font-family: var(--mono);
+font-size: 15px;
+font-weight: 500;
+letter-spacing: 0.05em;
+color: var(--text);
+}
+.app-month {
+font-size: 12px;
+color: var(--text3);
+font-family: var(--mono);
+}
+main {
+max-width: 480px;
+margin: 0 auto;
+padding: 1rem;
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+.total-card {
+background: var(--accent);
+color: var(--accent-text);
+border-radius: var(--radius);
+padding: 1.25rem 1.5rem;
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+}
+.total-label {
+font-size: 11px;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+opacity: 0.5;
+margin-bottom: 6px;
+}
+.total-amount {
+font-family: var(--mono);
+font-size: 28px;
+font-weight: 500;
+line-height: 1;
+}
+.total-count {
+font-size: 12px;
+opacity: 0.4;
+font-family: var(--mono);
+}
+.form-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+padding: 1.25rem;
+}
+.form-title {
+font-size: 11px;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--text3);
+margin-bottom: 1rem;
+font-family: var(--mono);
+}
+.form-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group.full { grid-column: 1 / -1; }
+label {
+font-size: 11px;
+color: var(--text3);
+letter-spacing: 0.04em;
+font-family: var(--mono);
+}
+select, input[type="text"], input[type="number"], input[type="date"] {
+font-family: var(--sans);
+font-size: 15px;
+padding: 10px 12px;
+border: 1px solid var(--border);
+border-radius: var(--radius-sm);
+background: var(--surface2);
+color: var(--text);
+width: 100%;
+appearance: none;
+-webkit-appearance: none;
+outline: none;
+transition: border-color 0.15s;
+}
+select:focus, input:focus {
+border-color: var(--border2);
+}
+select {
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%239E9C97' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+background-repeat: no-repeat;
+background-position: right 12px center;
+padding-right: 32px;
+}
+.btn-add {
+grid-column: 1 / -1;
+padding: 12px;
+font-family: var(--sans);
+font-size: 15px;
+font-weight: 500;
+background: var(--accent);
+color: var(--accent-text);
+border: none;
+border-radius: var(--radius-sm);
+cursor: pointer;
+margin-top: 4px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+transition: opacity 0.15s;
+}
+.btn-add:active { opacity: 0.75; }
+.list-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+overflow: hidden;
+}
+.list-header {
+padding: 1rem 1.25rem 0.75rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 1px solid var(--border);
+}
+.list-title {
+font-size: 11px;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--text3);
+font-family: var(--mono);
+}
+.export-btns { display: flex; gap: 6px; }
+.btn-icon {
+padding: 6px 10px;
+font-family: var(--mono);
+font-size: 11px;
+letter-spacing: 0.04em;
+background: transparent;
+color: var(--text2);
+border: 1px solid var(--border);
+border-radius: var(--radius-sm);
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 4px;
+transition: background 0.15s, color 0.15s;
+}
+.btn-icon:active { background: var(--surface2); }
+.empty-state {
+padding: 3rem 1rem;
+text-align: center;
+color: var(--text3);
+font-size: 14px;
+}
+.gasto-item {
+display: flex;
+align-items: center;
+padding: 12px 1.25rem;
+border-bottom: 1px solid var(--border);
+gap: 12px;
+animation: slideIn 0.2s ease;
+}
+.gasto-item:last-child { border-bottom: none; }
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(-6px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.gasto-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(--border2);
+flex-shrink: 0;
+}
+.gasto-info { flex: 1; min-width: 0; }
+.gasto-cat {
+font-size: 14px;
+font-weight: 500;
+color: var(--text);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+.gasto-meta {
+font-size: 11px;
+color: var(--text3);
+font-family: var(--mono);
+margin-top: 2px;
+}
+.gasto-monto {
+font-family: var(--mono);
+font-size: 14px;
+font-weight: 500;
+color: var(--text);
+white-space: nowrap;
+}
+.btn-del {
+background: none;
+border: none;
+cursor: pointer;
+color: var(--text3);
+padding: 4px;
+border-radius: 4px;
+line-height: 1;
+font-size: 16px;
+transition: color 0.15s;
+flex-shrink: 0;
+}
+.btn-del:active { color: var(--danger); }
+.toast {
+position: fixed;
+bottom: 24px;
+left: 50%;
+transform: translateX(-50%) translateY(10px);
+background: var(--text);
+color: var(--bg);
+padding: 10px 18px;
+border-radius: 20px;
+font-size: 13px;
+font-family: var(--mono);
+opacity: 0;
+transition: opacity 0.2s, transform 0.2s;
+pointer-events: none;
+white-space: nowrap;
+z-index: 100;
+}
+.toast.show {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
+</style>
 </head>
 <body>
-
 <header>
-  <div class="header-inner">
-    <span class="app-title">preventivo</span>
-    <span class="app-month" id="header-month"></span>
-  </div>
+<div class="header-inner">
+<span class="app-title">preventivo</span>
+<span class="app-month" id="header-month"></span>
+</div>
 </header>
-
 <main>
-  <div class="total-card">
-    <div>
-      <div class="total-label">Total registrado</div>
-      <div class="total-amount" id="total-amount">$0</div>
-    </div>
-    <div class="total-count" id="total-count">0 gastos</div>
-  </div>
-
-  <div class="form-card">
-    <div class="form-title">nuevo gasto</div>
-    <div class="form-grid">
-      <div class="form-group full">
-        <label for="cat">categoría</label>
-        <select id="cat">
-          <option value="">— seleccioná —</option>
-          <option>ANTEL</option>
-          <option>UTE</option>
-          <option>Crunchyroll</option>
-          <option>iCloud</option>
-          <option>Nafta</option>
-          <option>Compra USD</option>
-          <option>Super</option>
-          <option>Santander</option>
-          <option>Ocasionales</option>
-          <option>Imprevistos</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="monto">monto ($)</label>
-        <input type="number" id="monto" placeholder="0" min="0" step="0.01" inputmode="decimal" />
-      </div>
-
-      <div class="form-group">
-        <label for="fecha">fecha</label>
-        <input type="date" id="fecha" />
-      </div>
-
-      <div class="form-group full">
-        <label for="desc">descripción (opcional)</label>
-        <input type="text" id="desc" placeholder="Ej: carga YPF" autocomplete="off" />
-      </div>
-
-      <button class="btn-add full" onclick="agregarGasto()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Agregar gasto
-      </button>
-    </div>
-  </div>
-
-  <div class="list-card">
-    <div class="list-header">
-      <span class="list-title">registros</span>
-      <div class="export-btns">
-        <button class="btn-icon" onclick="copiarTabla()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          copiar
-        </button>
-        <button class="btn-icon" onclick="exportarCSV()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          csv
-        </button>
-      </div>
-    </div>
-    <div id="lista"></div>
-  </div>
+<div class="total-card">
+<div>
+<div class="total-label">Total registrado</div>
+<div class="total-amount" id="total-amount">$0</div>
+</div>
+<div class="total-count" id="total-count">0 gastos</div>
+</div>
+<div class="form-card">
+<div class="form-title">nuevo gasto</div>
+<div class="form-grid">
+<div class="form-group full">
+<label for="cat">categoría</label>
+<select id="cat">
+<option value="">— seleccioná —</option>
+<option>ANTEL</option>
+<option>UTE</option>
+<option>Crunchyroll</option>
+<option>iCloud</option>
+<option>Nafta</option>
+<option>Compra USD</option>
+<option>Super</option>
+<option>Santander</option>
+<option>Ocasionales</option>
+<option>Imprevistos</option>
+</select>
+</div>
+<div class="form-group">
+<label for="monto">monto ($)</label>
+<input type="number" id="monto" placeholder="0" min="0" step="0.01" inputmode="decimal" />
+</div>
+<div class="form-group">
+<label for="fecha">fecha</label>
+<input type="date" id="fecha" />
+</div>
+<div class="form-group full">
+<label for="desc">descripción (opcional)</label>
+<input type="text" id="desc" placeholder="Ej: carga YPF" autocomplete="off" />
+</div>
+<button class="btn-add full" onclick="agregarGasto()">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+Agregar gasto
+</button>
+</div>
+</div>
+<div class="list-card">
+<div class="list-header">
+<span class="list-title">registros</span>
+<div class="export-btns">
+<button class="btn-icon" onclick="copiarTabla()">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+copiar
+</button>
+<button class="btn-icon" onclick="exportarCSV()">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+csv
+</button>
+</div>
+</div>
+<div id="lista"></div>
+</div>
 </main>
-
 <div class="toast" id="toast"></div>
-
 <script>
-  const STORAGE_KEY = 'preventivo-v2';
-  let gastos = [];
+const STORAGE_KEY = 'preventivo-v2';
 
-  function init() {
-    const hoy = new Date();
-    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-    document.getElementById('header-month').textContent = meses[hoy.getMonth()] + ' ' + hoy.getFullYear();
-    document.getElementById('fecha').value = hoy.toISOString().split('T')[0];
+// ============================================================
+//  CONFIG SINCRONIZACIÓN GOOGLE SHEETS
+//  Reemplazá XXXX por tu URL /exec de Apps Script.
+//  El token NO se hardcodea: se pide una vez por prompt y
+//  queda en localStorage (no queda expuesto en el repo público).
+// ============================================================
+const WEBHOOK_URL = 'https://script.google.com/macros/s/XXXX/exec';
 
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) gastos = JSON.parse(saved);
-    } catch(e) { gastos = []; }
+let gastos = [];
 
-    renderizar();
-  }
+function init() {
+const hoy = new Date();
+const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+document.getElementById('header-month').textContent = meses[hoy.getMonth()] + ' ' + hoy.getFullYear();
+document.getElementById('fecha').value = hoy.toISOString().split('T')[0];
+try {
+const saved = localStorage.getItem(STORAGE_KEY);
+if (saved) gastos = JSON.parse(saved);
+} catch(e) { gastos = []; }
+renderizar();
+}
 
-  function guardar() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(gastos)); } catch(e) {}
-  }
+function guardar() {
+try { localStorage.setItem(STORAGE_KEY, JSON.stringify(gastos)); } catch(e) {}
+}
 
-  function agregarGasto() {
-    const cat = document.getElementById('cat').value;
-    const monto = parseFloat(document.getElementById('monto').value);
-    const desc = document.getElementById('desc').value.trim();
-    const fecha = document.getElementById('fecha').value;
+// --- Token de sincronización (se pide una sola vez) ---
+function getToken() {
+let t = localStorage.getItem('preventivo-token');
+if (!t) {
+t = prompt('Token de sincronización con la planilla:');
+if (t) { t = t.trim(); localStorage.setItem('preventivo-token', t); }
+}
+return t;
+}
 
-    if (!cat) { toast('Seleccioná una categoría'); return; }
-    if (!monto || monto <= 0) { toast('Ingresá un monto válido'); return; }
+// --- Envío a Google Sheets ---
+// text/plain => request "simple", sin preflight OPTIONS (que Apps
+// Script no contesta) y permite leer la respuesta para tener
+// feedback real de éxito/error.
+function sincronizar(g) {
+const token = getToken();
+if (!token) { toast('Sin token — guardado solo local'); return; }
 
-    // Objeto con la información organizada
-    const nuevoGasto = { id: Date.now(), fecha, cat, monto, desc };
+fetch(WEBHOOK_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+body: JSON.stringify({
+token: token,
+fecha: g.fecha,
+monto: g.monto,
+categoria: g.cat,    // mapeo cat  -> categoria
+descripcion: g.desc  // mapeo desc -> descripcion
+})
+})
+.then(r => r.json())
+.then(out => toast(out.ok ? 'Sincronizado ✓' : 'Error: ' + out.error))
+.catch(() => toast('Guardado local, falló sync ⚠'));
+}
 
-    gastos.unshift(nuevoGasto);
-    guardar();
-    renderizar();
+function agregarGasto() {
+const cat = document.getElementById('cat').value;
+const monto = parseFloat(document.getElementById('monto').value);
+const desc = document.getElementById('desc').value.trim();
+const fecha = document.getElementById('fecha').value;
 
-    // --- BLOQUE NUEVO: ENVÍO AUTOMÁTICO A GOOGLE SHEETS ---
-    toast('Guardando localmente...');
-    
-    // REEMPLAZA ESTA URL CON LA QUE TE DIO GOOGLE APPS SCRIPT
-    const WEBHOOK_URL = 'TU_URL_DE_APPS_SCRIPT_AQUÍ'; 
+if (!cat) { toast('Seleccioná una categoría'); return; }
+if (!monto || monto <= 0) { toast('Ingresá un monto válido'); return; }
 
-    fetch(WEBHOOK_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Evita problemas de CORS comunes en Apps Script
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(nuevoGasto)
-    })
-    .then(() => {
-      toast('Gasto agregado y sincronizado ✓');
-    })
-    .catch(err => {
-      console.error(err);
-      toast('Guardado local, error al sincronizar ⚠');
-    });
-    // --------------------------------------------------------
+const nuevoGasto = { id: Date.now(), fecha, cat, monto, desc };
+gastos.unshift(nuevoGasto);
+guardar();
+renderizar();
 
-    // Limpiar campos del formulario
-    document.getElementById('cat').value = '';
-    document.getElementById('monto').value = '';
-    document.getElementById('desc').value = '';
-    document.getElementById('cat').focus();
-  }
+sincronizar(nuevoGasto);   // <- envío a Sheets
 
-  function eliminar(id) {
-    gastos = gastos.filter(g => g.id !== id);
-    guardar();
-    renderizar();
-  }
+// Limpiar campos del formulario
+document.getElementById('cat').value = '';
+document.getElementById('monto').value = '';
+document.getElementById('desc').value = '';
+document.getElementById('cat').focus();
+}
 
-  function renderizar() {
-    const total = gastos.reduce((s, g) => s + g.monto, 0);
-    document.getElementById('total-amount').textContent = '$' + total.toLocaleString('es-UY', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-    document.getElementById('total-count').textContent = gastos.length + (gastos.length === 1 ? ' gasto' : ' gastos');
+function eliminar(id) {
+gastos = gastos.filter(g => g.id !== id);
+guardar();
+renderizar();
+}
 
-    const lista = document.getElementById('lista');
-    if (gastos.length === 0) {
-      lista.innerHTML = '<div class="empty-state">Todavía no hay gastos registrados</div>';
-      return;
-    }
+function renderizar() {
+const total = gastos.reduce((s, g) => s + g.monto, 0);
+document.getElementById('total-amount').textContent = '$' + total.toLocaleString('es-UY', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+document.getElementById('total-count').textContent = gastos.length + (gastos.length === 1 ? ' gasto' : ' gastos');
 
-    lista.innerHTML = gastos.map(g => `
-      <div class="gasto-item">
-        <div class="gasto-dot"></div>
-        <div class="gasto-info">
-          <div class="gasto-cat">${g.cat}</div>
-          <div class="gasto-meta">${fmtFecha(g.fecha)}${g.desc ? ' · ' + g.desc : ''}</div>
-        </div>
-        <div class="gasto-monto">$${g.monto.toLocaleString('es-UY', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</div>
-        <button class="btn-del" onclick="eliminar(${g.id})" aria-label="Eliminar">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    `).join('');
-  }
+const lista = document.getElementById('lista');
+if (gastos.length === 0) {
+lista.innerHTML = '<div class="empty-state">Todavía no hay gastos registrados</div>';
+return;
+}
 
-  function fmtFecha(f) {
-    if (!f) return '';
-    const [y, m, d] = f.split('-');
-    return `${d}/${m}/${y}`;
-  }
+lista.innerHTML = gastos.map(g => `
+<div class="gasto-item">
+<div class="gasto-dot"></div>
+<div class="gasto-info">
+<div class="gasto-cat">${g.cat}</div>
+<div class="gasto-meta">${fmtFecha(g.fecha)}${g.desc ? ' · ' + g.desc : ''}</div>
+</div>
+<div class="gasto-monto">$${g.monto.toLocaleString('es-UY', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</div>
+<button class="btn-del" onclick="eliminar(${g.id})" aria-label="Eliminar">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+</div>
+`).join('');
+}
 
-  function exportarCSV() {
-    if (gastos.length === 0) { toast('No hay gastos para exportar'); return; }
-    const bom = '\uFEFF';
-    const header = 'Fecha,Categoría,Monto,Descripción';
-    const rows = gastos.map(g => `${fmtFecha(g.fecha)},"${g.cat}",${g.monto},"${g.desc}"`);
-    const csv = bom + [header, ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `gastos_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast('CSV descargado');
-  }
+function fmtFecha(f) {
+if (!f) return '';
+const [y, m, d] = f.split('-');
+return `${d}/${m}/${y}`;
+}
 
-  function copiarTabla() {
-    if (gastos.length === 0) { toast('No hay gastos para copiar'); return; }
-    const rows = gastos.map(g => `${fmtFecha(g.fecha)}\t${g.cat}\t${g.monto}\t${g.desc}`);
-    const texto = 'Fecha\tCategoría\tMonto\tDescripción\n' + rows.join('\n');
-    navigator.clipboard.writeText(texto)
-      .then(() => toast('Copiado al portapapeles'))
-      .catch(() => toast('No se pudo copiar'));
-  }
+function exportarCSV() {
+if (gastos.length === 0) { toast('No hay gastos para exportar'); return; }
+const bom = '\uFEFF';
+const header = 'Fecha,Categoría,Monto,Descripción';
+const rows = gastos.map(g => `${fmtFecha(g.fecha)},"${g.cat}",${g.monto},"${g.desc}"`);
+const csv = bom + [header, ...rows].join('\n');
+const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = `gastos_${new Date().toISOString().slice(0, 10)}.csv`;
+a.click();
+URL.revokeObjectURL(url);
+toast('CSV descargado');
+}
 
-  function toast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
-  }
+function copiarTabla() {
+if (gastos.length === 0) { toast('No hay gastos para copiar'); return; }
+const rows = gastos.map(g => `${fmtFecha(g.fecha)}\t${g.cat}\t${g.monto}\t${g.desc}`);
+const texto = 'Fecha\tCategoría\tMonto\tDescripción\n' + rows.join('\n');
+navigator.clipboard.writeText(texto)
+.then(() => toast('Copiado al portapapeles'))
+.catch(() => toast('No se pudo copiar'));
+}
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') agregarGasto();
-  });
+function toast(msg) {
+const t = document.getElementById('toast');
+t.textContent = msg;
+t.classList.add('show');
+clearTimeout(t._timer);
+t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
 
-  init();
+document.addEventListener('keydown', e => {
+if (e.key === 'Enter') agregarGasto();
+});
+
+init();
 </script>
 </body>
 </html>
